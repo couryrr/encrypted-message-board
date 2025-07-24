@@ -13,7 +13,8 @@ plugins:
   - remote: buf.build/grpc/go
     out: ../api/gen
     opt: paths=source_relative
-  - remote: buf.build/protocolbuffers/java
+  - remote: buf.build/protocolbuffers/java:v29.3
     out: ../data/src/main/java
-  - remote: buf.build/grpc/java
+  - remote: buf.build/grpc/java:v1.73.0
     out: ../data/src/main/java
+    opt: '@generated=omit'

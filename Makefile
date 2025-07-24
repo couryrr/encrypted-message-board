@@ -7,8 +7,7 @@ generate:
 # Clean generated files
 clean:
 	rm -rf api/gen/*
-	find data/src/main/java -name "*Grpc.java" -delete
-	find data/src/main/java -name "*Proto.java" -delete
+	rm -rf data/src/main/java/github/couryrr/backend/playbook/data/gen
 
 # Lint protobuf files
 lint:
