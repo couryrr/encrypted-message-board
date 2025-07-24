@@ -1,5 +1,12 @@
 # Agent Guidelines for Backend Playbook
 
+## Important Notes
+- Do not touch dependency files.
+  - pom.xml
+  - package.json
+  - go.mod
+
+
 ## Build/Test/Lint Commands
 - **API (Go)**: `cd api && go build`, `go test ./...`, `go fmt ./...`, `go vet ./...`
 - **Data (Java/Spring Boot)**: `cd data && ./mvnw clean compile`, `./mvnw test`, `./mvnw test -Dtest=ClassName#methodName`
