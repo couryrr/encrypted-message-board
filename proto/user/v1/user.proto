@@ -1,24 +1,33 @@
 syntax = "proto3";
 
-package signup.v1;
+package user.v1;
 
-option go_package = "github.com/couryrr/backend-playbook-api/gen/signup/v1;signupv1";
-option java_package = "github.couryrr.backend.playbook.data.gen.signup.v1";
+option go_package = "github.com/couryrr/backend-playbook-api/gen/user/v1;userv1";
+option java_package = "github.couryrr.backend.playbook.data.gen.user.v1";
 option java_multiple_files = true;
-option java_outer_classname = "SignupProto";
+option java_outer_classname = "UserProto";
 
 import "google/protobuf/timestamp.proto";
 
-// SignupService handles user registration and validation
-service SignupService {
+// UserService handles user management operations
+service UserService {
   // CreateUser creates a new user account
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  
+  // UpdateUser updates user information
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
   
   // ValidateEmail checks if an email is available and valid
   rpc ValidateEmail(ValidateEmailRequest) returns (ValidateEmailResponse);
   
   // CheckUsername checks if a username is available
   rpc CheckUsername(CheckUsernameRequest) returns (CheckUsernameResponse);
+  
+  // AuthenticateUser validates user credentials
+  rpc AuthenticateUser(AuthenticateUserRequest) returns (AuthenticateUserResponse);
 }
 
 // User represents a user account
@@ -49,6 +58,37 @@ message CreateUserResponse {
   }
 }
 
+// GetUserRequest contains user ID to retrieve
+message GetUserRequest {
+  string id = 1;
+}
+
+// GetUserResponse returns the user or error
+message GetUserResponse {
+  oneof result {
+    User user = 1;
+    NotFoundError error = 2;
+  }
+}
+
+// UpdateUserRequest contains user data to update
+message UpdateUserRequest {
+  string id = 1;
+  optional string username = 2;
+  optional string email = 3;
+  optional string first_name = 4;
+  optional string last_name = 5;
+}
+
+// UpdateUserResponse returns the updated user or error
+message UpdateUserResponse {
+  oneof result {
+    User user = 1;
+    ValidationError validation_error = 2;
+    NotFoundError not_found_error = 3;
+  }
+}
+
 // ValidateEmailRequest contains email to validate
 message ValidateEmailRequest {
   string email = 1;
@@ -72,6 +112,20 @@ message CheckUsernameResponse {
   string message = 2;
 }
 
+// AuthenticateUserRequest contains login credentials
+message AuthenticateUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+// AuthenticateUserResponse returns authentication result
+message AuthenticateUserResponse {
+  oneof result {
+    User user = 1;
+    AuthenticationError error = 2;
+  }
+}
+
 // ValidationError represents validation failures
 message ValidationError {
   string code = 1;
@@ -82,5 +136,16 @@ message ValidationError {
 // FieldError represents a field-specific validation error
 message FieldError {
   string field = 1;
+  string message = 2;
+}
+
+// NotFoundError represents a resource not found error
+message NotFoundError {
+  string message = 1;
+}
+
+// AuthenticationError represents authentication failures
+message AuthenticationError {
+  string code = 1;
   string message = 2;
 }
