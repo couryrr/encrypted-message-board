@@ -1,0 +1,58 @@
+name: Proto
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'proto/**'
+      - '.github/workflows/proto.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'proto/**'
+      - '.github/workflows/proto.yml'
+
+jobs:
+  proto:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup buf
+        uses: bufbuild/buf-action@v1
+        with:
+          input: 'proto'
+          version: '1.55.1'
+          github_token: ${{ github.token }}
+      
+      - name: Format proto files
+        run: |
+          cd proto
+          buf format --diff --exit-code
+      
+      - name: Lint proto files
+        run: |
+          cd proto
+          buf lint
+      
+      - name: Generate code
+        run: |
+          cd proto
+          buf generate
+      
+      - name: Check for breaking changes
+        if: github.event_name == 'pull_request'
+        run: |
+          cd proto
+          buf breaking --against 'https://github.com/${{ github.repository }}.git#branch=main'
+      
+      - name: Upload generated artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-proto-code
+          path: |
+            api/gen/
+            data/src/main/java/github/couryrr/backend/playbook/data/gen/
+          retention-days: 7
