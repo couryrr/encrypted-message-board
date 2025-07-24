@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package signup.v1;
+
+option go_package = "github.com/couryrr/backend-playbook-api/gen/signup/v1;signupv1";
+option java_package = "github.couryrr.backend.playbook.data.gen.signup.v1";
+option java_multiple_files = true;
+option java_outer_classname = "SignupProto";
+
+import "google/protobuf/timestamp.proto";
+
+// SignupService handles user registration and validation
+service SignupService {
+  // CreateUser creates a new user account
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // ValidateEmail checks if an email is available and valid
+  rpc ValidateEmail(ValidateEmailRequest) returns (ValidateEmailResponse);
+  
+  // CheckUsername checks if a username is available
+  rpc CheckUsername(CheckUsernameRequest) returns (CheckUsernameResponse);
+}
+
+// User represents a user account
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// CreateUserRequest contains user registration data
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
+
+// CreateUserResponse returns the created user or error
+message CreateUserResponse {
+  oneof result {
+    User user = 1;
+    ValidationError error = 2;
+  }
+}
+
+// ValidateEmailRequest contains email to validate
+message ValidateEmailRequest {
+  string email = 1;
+}
+
+// ValidateEmailResponse returns validation result
+message ValidateEmailResponse {
+  bool is_valid = 1;
+  bool is_available = 2;
+  string message = 3;
+}
+
+// CheckUsernameRequest contains username to check
+message CheckUsernameRequest {
+  string username = 1;
+}
+
+// CheckUsernameResponse returns availability result
+message CheckUsernameResponse {
+  bool is_available = 1;
+  string message = 2;
+}
+
+// ValidationError represents validation failures
+message ValidationError {
+  string code = 1;
+  string message = 2;
+  repeated FieldError field_errors = 3;
+}
+
+// FieldError represents a field-specific validation error
+message FieldError {
+  string field = 1;
+  string message = 2;
+}
