@@ -308,3 +308,10 @@ tramp
 !.vscode/*.code-snippets
 .history/
 *.vsix
+
+# Generated protobuf files
+gen/
+*Grpc.java
+*Proto.java
+*.pb.go
+*_grpc.pb.go
