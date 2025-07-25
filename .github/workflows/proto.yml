@@ -47,7 +47,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           cd proto
-          buf breaking --against 'https://github.com/${{ github.repository }}.git#branch=main'
+          buf breaking --against 'https://github.com/${{ github.repository }}.git#branch=main,subdir=proto'
       
       - name: Upload generated artifacts
         uses: actions/upload-artifact@v4
