@@ -2,30 +2,30 @@ syntax = "proto3";
 
 package user.v1;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/couryrr/backend-playbook-api/gen/user/v1;userv1";
-option java_package = "github.couryrr.backend.playbook.data.gen.user.v1";
 option java_multiple_files = true;
 option java_outer_classname = "UserProto";
-
-import "google/protobuf/timestamp.proto";
+option java_package = "github.couryrr.backend.playbook.data.gen.user.v1";
 
 // UserService handles user management operations
 service UserService {
   // CreateUser creates a new user account
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  
+
   // GetUser retrieves a user by ID
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  
+
   // UpdateUser updates user information
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
-  
+
   // ValidateEmail checks if an email is available and valid
   rpc ValidateEmail(ValidateEmailRequest) returns (ValidateEmailResponse);
-  
+
   // CheckUsername checks if a username is available
   rpc CheckUsername(CheckUsernameRequest) returns (CheckUsernameResponse);
-  
+
   // AuthenticateUser validates user credentials
   rpc AuthenticateUser(AuthenticateUserRequest) returns (AuthenticateUserResponse);
 }
