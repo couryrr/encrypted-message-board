@@ -24,6 +24,7 @@ jobs:
         uses: bufbuild/buf-action@v1
         with:
           input: 'proto'
+          setup_only: true
           version: '1.55.1'
           github_token: ${{ github.token }}
       
