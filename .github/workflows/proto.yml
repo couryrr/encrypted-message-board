@@ -11,7 +11,8 @@ on:
     paths:
       - 'proto/**'
       - '.github/workflows/proto.yml'
-
+permissions:
+    contents: write
 jobs:
   proto:
     runs-on: ubuntu-latest
