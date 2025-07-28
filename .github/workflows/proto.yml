@@ -44,21 +44,29 @@ jobs:
           cd proto
           buf lint
       
-      - name: Generate code
-        run: |
-          cd proto
-          buf generate
-      
-      - name: Build proto JAR
-        run: |
-          cd data
-          ./mvnw clean compile jar:jar -DskipTests
-      
       - name: Check for breaking changes
         if: github.event_name == 'pull_request'
         run: |
           cd proto
           buf breaking --against 'https://github.com/${{ github.repository }}.git#branch=main,subdir=proto'
+      
+      - name: Create temp build directory
+        run: |
+          mkdir -p /tmp/proto-build/src/main/java
+      
+      - name: Generate code for JAR
+        run: |
+          cd proto
+          buf generate --template buf.gen.ci.yaml
+      
+      - name: Copy pom.xml template
+        run: |
+          cp proto/pom.xml.template /tmp/proto-build/pom.xml
+      
+      - name: Build proto JAR
+        run: |
+          cd /tmp/proto-build
+          mvn clean compile jar:jar -DskipTests
       
       - name: Create Release
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -66,7 +74,12 @@ jobs:
         with:
           tag_name: proto-v${{ github.run_number }}
           name: Proto JAR Release v${{ github.run_number }}
-          files: data/target/data-*.jar
+          files: /tmp/proto-build/target/proto-generated-*.jar
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Cleanup temp directory
+        if: always()
+        run: |
+          rm -rf /tmp/proto-build
