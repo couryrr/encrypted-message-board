@@ -5,7 +5,8 @@
   - pom.xml
   - package.json
   - go.mod
-
+- Do not comment a lot in code.
+- Do not overuse emojis.
 
 ## Build/Test/Lint Commands
 - **API (Go)**: `cd api && go build`, `go test ./...`, `go fmt ./...`, `go vet ./...`
