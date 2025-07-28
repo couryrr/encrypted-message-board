@@ -34,6 +34,14 @@ jobs:
           distribution: 'temurin'
           java-version: '24'
       
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml', '**/pom.xml.template') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      
       - name: Format proto files
         run: |
           cd proto
