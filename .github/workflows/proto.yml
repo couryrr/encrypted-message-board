@@ -28,6 +28,12 @@ jobs:
           version: '1.55.1'
           github_token: ${{ github.token }}
       
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+      
       - name: Format proto files
         run: |
           cd proto
@@ -43,17 +49,24 @@ jobs:
           cd proto
           buf generate
       
+      - name: Build proto JAR
+        run: |
+          cd data
+          ./mvnw clean compile jar:jar -DskipTests
+      
       - name: Check for breaking changes
         if: github.event_name == 'pull_request'
         run: |
           cd proto
           buf breaking --against 'https://github.com/${{ github.repository }}.git#branch=main,subdir=proto'
       
-      - name: Upload generated artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
         with:
-          name: generated-proto-code
-          path: |
-            api/gen/
-            data/src/main/java/github/couryrr/backend/playbook/data/gen/
-          retention-days: 7
+          tag_name: proto-v${{ github.run_number }}
+          name: Proto JAR Release v${{ github.run_number }}
+          files: data/target/data-*.jar
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
